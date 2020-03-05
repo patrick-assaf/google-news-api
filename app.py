@@ -1,0 +1,23 @@
+from flask import Flask, request, jsonify
+from newsapi import NewsApiClient
+
+# Create an instance of the Flask class
+app = Flask(__name__)
+
+# Init
+newsapi = NewsApiClient(api_key='2108471b175647ec9f491085b681aafe')
+
+# /v2/top-headlines
+top_headlines = newsapi.get_top_headlines(q='bitcoin', category='business', language='en', country='us')
+
+#Use the route() decorator to tell Flask what URL should trigger our function
+@app.route('/', methods=['GET'])
+def root():
+    return app.send_static_file('index.html')
+
+@app.route('/headlines', methods=['GET'])
+def get_headlines():
+    return jsonify({'headlines': top_headlines})
+
+if __name__ == '__main__':
+    app.run(debug=True)
