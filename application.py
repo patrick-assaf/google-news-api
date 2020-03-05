@@ -1,7 +1,7 @@
 from flask import Flask, request
 
 # Create an instance of the Flask class
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__, static_url_path='/static/')
 
 #Use the route() decorator to tell Flask what URL should trigger our function
 @app.route('/')
