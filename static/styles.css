@@ -3,6 +3,21 @@ html, body {
     margin: 0 auto;
 }
 
+#main {
+    text-align: center;
+    margin: 0 auto;
+    width: 900px;
+}
+
+.btn-group {
+    float: left;
+    overflow: hidden;
+    position: sticky;
+    top: 30px;
+    left: 30px;
+    border-radius: 5px 5px 5px 5px;
+}
+
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
@@ -59,7 +74,7 @@ img {
 .headlines {
     text-align: center;
     margin: 0 auto;
-    width: 60%;
+    width: auto;
     border-top: 1px dotted;
     padding-top: 10px;
     display: table;
