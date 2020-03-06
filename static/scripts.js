@@ -30,11 +30,20 @@ function google_news() {
     }
 
     var cnn_content = '';
-    for(var i = 0; i < 4; i++) {
-        cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[i].url + '" target="_blank">';
-        cnn_content += '<img src="' + cnnObj.headlines.articles[i].urlToImage + '">';
-        cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[i].title + '</b></h4>'
-        cnn_content += '<p>' + cnnObj.headlines.articles[i].description +'</p></div></div>';
+    var cnn_count = 0;
+    var j = 0;
+    while(cnn_count < 4) {
+        if(cnnObj.headlines.articles[j].description.length > 0 &&  cnnObj.headlines.articles[j].content !== null) {
+            cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[j].url + '" target="_blank">';
+            cnn_content += '<img src="' + cnnObj.headlines.articles[j].urlToImage + '">';
+            cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[j].title + '</b></h4>'
+            cnn_content += '<p>' + cnnObj.headlines.articles[j].description +'</p></div></a></div>';
+            cnn_count += 1;
+            j += 1;
+        }
+        else {
+            j += 1;
+        }
     }
     document.getElementById("cnn").innerHTML = cnn_content;
 
@@ -63,11 +72,20 @@ function google_news() {
     }
 
     var fox_content = '';
-    for(var i = 0; i < 4; i++) {
-        fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
-        fox_content += '<img src="' + foxObj.headlines.articles[i].urlToImage + '">';
-        fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
-        fox_content += '<p>' + foxObj.headlines.articles[i].description +'</p></div></a></div>';
+    var fox_count = 0;
+    var i = 0;
+    while(fox_count < 4) {
+        if(foxObj.headlines.articles[i].description.length > 0 &&  foxObj.headlines.articles[i].content !== null) {
+            fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
+            fox_content += '<img src="' + foxObj.headlines.articles[i].urlToImage + '">';
+            fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
+            fox_content += '<p>' + foxObj.headlines.articles[i].description +'</p></div></a></div>';
+            fox_count += 1;
+            i += 1;
+        }
+        else {
+            i += 1;
+        }
     }
     document.getElementById("fox").innerHTML = fox_content;
 }
