@@ -6,8 +6,11 @@ html, body {
 .card {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     transition: 0.3s;
-    width: 40%;
+    width: 23%;
     border-radius: 5px;
+    text-align: center;
+    margin: 5px;
+    display: table-cell;
 }
 
 .card:hover {
@@ -43,4 +46,18 @@ img {
 .btn-group button:hover{
     background-color: #4CAF50;
     color: white;
+}
+
+.title {
+    margin-bottom: 5px;
+}
+
+.headlines {
+    text-align: center;
+    margin: 0 auto;
+    width: 60%;
+    border-top: 1px dotted;
+    padding-top: 10px;
+    display: table;
+    border-spacing: 7px;
 }
