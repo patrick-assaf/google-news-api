@@ -39,7 +39,7 @@ function google_news() {
         x += 1;
     }
 
-    var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = 370 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
