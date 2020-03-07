@@ -4,6 +4,7 @@ html, body {
 }
 
 #main {
+    padding-top: 30px;
     text-align: center;
     margin: 0 auto;
     width: 900px;
@@ -33,7 +34,7 @@ html, body {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-img {
+.card img {
     border-radius: 5px 5px 0 0;
     max-width: 100%;
     max-height: 100%;
@@ -84,4 +85,17 @@ img {
 .headlines a {
     text-decoration: none;
     color: black;
+}
+
+#carousel {
+    width: 500px;
+    height: 300px;
+}
+
+#carousel img {
+    max-width: 100%;
+    max-height: 100%;
+    width: 500px;
+    height: 300px;
+    object-fit: cover;
 }
