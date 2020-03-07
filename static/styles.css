@@ -17,6 +17,7 @@ html, body {
     position: sticky;
     top: 30px;
     left: 30px;
+    right: 30px;
     border-radius: 5px 5px 5px 5px;
 }
 
@@ -111,12 +112,12 @@ html, body {
 .img-write {
     position: absolute;
     bottom: 0px;
-    right: 20px;
     top: 180px;
     background: rgba(0, 0, 0, 0.5);
     color: white;
     padding-left: 20px;
     padding-right: 20px;
+    width: 460px;
 }
 
 #img-title {

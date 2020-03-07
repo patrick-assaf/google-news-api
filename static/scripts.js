@@ -76,9 +76,9 @@ function google_news() {
     var cnn = cnnObj.headlines.articles;
     var j = 0;
     while(cnn_count < 4) {
-        if(cnn[j].description != null || cnn[j].content != null || cnn[j].urlToImage != null
-            || cnn[j].author != null || cnn[j].title != null || cnn[j].url != null
-            || cnn[j].publishedAt != null || cnn[j].source != null) {
+        if(cnn[j].description != null && cnn[j].content != null && cnn[j].urlToImage != null
+            && cnn[j].author != null && cnn[j].title != null && cnn[j].url != null
+            && cnn[j].publishedAt != null && cnn[j].source != null) {
             cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[j].url + '" target="_blank">';
             cnn_content += '<img src="' + cnnObj.headlines.articles[j].urlToImage + '">';
             cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[j].title + '</b></h4>'
@@ -121,9 +121,9 @@ function google_news() {
     var fox = foxObj.headlines.articles;
     var i = 0;
     while(fox_count < 4) {
-        if(fox[i].description != null || fox[i].content != null || fox[i].urlToImage != null
-            || fox[i].author != null || fox[i].title != null || fox[i].url != null
-            || fox[i].publishedAt != null || fox[i].source != null) {
+        if(fox[i].description != null && fox[i].content != null && fox[i].urlToImage != null
+            && fox[i].author != null && fox[i].title != null && fox[i].url != null
+            && fox[i].publishedAt != null && fox[i].source != null) {
             fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
             fox_content += '<img src="' + foxObj.headlines.articles[i].urlToImage + '">';
             fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
