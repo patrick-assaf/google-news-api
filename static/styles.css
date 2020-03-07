@@ -87,9 +87,15 @@ html, body {
     color: black;
 }
 
+#top-elements {
+    display: table;
+}
+
 #carousel {
     width: 500px;
     height: 300px;
+    display: table-cell;
+    padding-right: 20px;
 }
 
 #carousel img {
@@ -98,4 +104,9 @@ html, body {
     width: 500px;
     height: 300px;
     object-fit: cover;
+}
+
+#cloud {
+    display: table-cell;
+    background-color: whitesmoke;
 }
