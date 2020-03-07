@@ -7,8 +7,37 @@ function google_news() {
 
     document.getElementById("main").innerHTML = html;
 
-    // List of words
-    var myWords = [{word: "Running", size: "10"}, {word: "Surfing", size: "20"}, {word: "Climbing", size: "50"}, {word: "Kiting", size: "30"}, {word: "Sailing", size: "20"}, {word: "Snowboarding", size: "60"} ]
+    var cloudObj;
+    var cloudURL = '/word-cloud';
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", cloudURL, false);
+    try {
+        xmlhttp.send();
+    }
+    catch(sendError) {
+        alert(sendError.message);
+    }
+
+    if(xmlhttp.status == 404){
+        alert("Error: Unable to load file");
+    }
+    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+            cloudObj = JSON.parse(xmlhttp.responseText);
+        }
+        catch(parseError) {
+            alert(parseError);
+        }
+    }
+
+    var myWords = [];
+    var keys = Object.keys(cloudObj.cloud);
+    var x = 0;
+    for(var word in cloudObj.cloud) {
+        myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*7};
+        x += 1;
+    }
 
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
         width = 370 - margin.left - margin.right,
@@ -67,7 +96,7 @@ function google_news() {
             cnnObj = JSON.parse(xmlhttp.responseText);
         }
         catch(parseError) {
-            alert("Error: Could not parse JSON file");
+            alert(parseError);
         }
     }
 
@@ -112,7 +141,7 @@ function google_news() {
             foxObj = JSON.parse(xmlhttp.responseText);
         }
         catch(parseError) {
-            alert("Error: Could not parse JSON file");
+            alert(parseError);
         }
     }
 
@@ -180,7 +209,6 @@ function google_news() {
                 i += 1;
             }
         }
-        console.log(selectObj);
         showSlides();
     }
 
