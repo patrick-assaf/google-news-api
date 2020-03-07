@@ -11,7 +11,7 @@ function google_news() {
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 10, bottom: 10, left: 10},
-        width = 400 - margin.left - margin.right,
+        width = 370 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -192,8 +192,11 @@ function google_news() {
 
     function showSlides() {
         var slide = '';
-        slide += '<img src="' + selectObj[index].urlToImage + '">';
+        slide += '<a href="' + selectObj[index].url + '" target="_blank"><img src="' + selectObj[index].urlToImage + '">';
+        slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
         document.getElementById("carousel").innerHTML = slide;
+        document.getElementById("img-title").innerHTML = selectObj[index].title;
+        document.getElementById("img-txt").innerHTML = selectObj[index].description;
         if(index == 4) {
             index = 0;
         }
