@@ -219,9 +219,15 @@ function google_news() {
         var slide = '';
         slide += '<a href="' + selectObj[index].url + '" target="_blank"><img src="' + selectObj[index].urlToImage + '">';
         slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
-        document.getElementById("carousel").innerHTML = slide;
-        document.getElementById("img-title").innerHTML = selectObj[index].title;
-        document.getElementById("img-txt").innerHTML = selectObj[index].description;
+        if(document.getElementById("carousel") !== null) {
+            document.getElementById("carousel").innerHTML = slide;
+        }
+        if(document.getElementById("img-title") !== null) {
+            document.getElementById("img-title").innerHTML = selectObj[index].title;
+        }
+        if(document.getElementById("img-txt") !== null) {
+            document.getElementById("img-txt").innerHTML = selectObj[index].description;
+        }
         if(index == 4) {
             index = 0;
         }
@@ -238,12 +244,12 @@ function search_page() {
     document.getElementById("search-btn").className = "selected";
 
     var html = '<form id="form" name="form" method="GET">';
-    html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;';
     html += '<input type="text" id="keyword" name="keyword" required />';
     html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From<span style="color:red;">&nbsp;*&nbsp;</span>';
-    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" id="from" name="from" required />';
+    html += '&nbsp;&nbsp;&nbsp;<input type="date" id="from" name="from" required />';
     html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To<span style="color:red;">&nbsp;*&nbsp;</span>';
-    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" id="to" name="to" required /></div>';
+    html += '&nbsp;&nbsp;&nbsp;<input type="date" id="to" name="to" required /></div>';
     html += '<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Category  &nbsp;&nbsp;&nbsp;';
     html += '<select name="category" id="category">';
     html += '<option value="all" selected>All</option><option value="business">Business</option>';
