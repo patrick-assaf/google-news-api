@@ -52,8 +52,8 @@ html, body {
     border-bottom: none; 
 }
 
-.btn-group button {
-    background-color: #e7e7e7; color: black;
+.btn-group button.not-selected {
+    background-color: #e7e7e7;
     border: none;
     color: black;
     padding: 15px 32px;
@@ -63,6 +63,21 @@ html, body {
     font-size: 16px;
     cursor: pointer;
     width: 200px;
+    outline: none; 
+}
+
+.btn-group button.selected {
+    background-color: grey;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    cursor: pointer;
+    width: 200px;
+    outline: none; 
 }
 
 .btn-group button:hover{

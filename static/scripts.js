@@ -1,6 +1,9 @@
 
 function google_news() {
 
+    document.getElementById("google-btn").className = "selected";
+    document.getElementById("search-btn").className = "not-selected";
+
     var html = '<div id="top-elements"><div id="carousel"></div><div id="cloud"></div></div>';
     html += '<div><h1 class="title"><b>CNN</b></h1><div class="headlines" id="cnn"></div></div>';
     html += '<div><h1 class="title"><b>Fox News</b></h1><div class="headlines" id="fox"></div></div>';
@@ -35,7 +38,7 @@ function google_news() {
     var keys = Object.keys(cloudObj.cloud);
     var x = 0;
     for(var word in cloudObj.cloud) {
-        myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*7};
+        myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*(14-cloudObj.cloud[word])};
         x += 1;
     }
 
@@ -227,4 +230,15 @@ function google_news() {
         }
         setTimeout(showSlides, 5*1000);
     }
+}
+
+function search_page() {
+
+    document.getElementById("google-btn").className = "not-selected";
+    document.getElementById("search-btn").className = "selected";
+
+    var html = "<h1>It works.</h1>"
+
+    document.getElementById("main").innerHTML = html;
+
 }
