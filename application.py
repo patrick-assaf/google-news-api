@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from newsapi import NewsApiClient
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 newsapi = NewsApiClient(api_key='2108471b175647ec9f491085b681aafe')
 
@@ -33,25 +33,25 @@ for word in sorted_cloud:
     if len(cloud) < 30:
         cloud[word] = wordcount[word]
 
-@app.route('/word-cloud', methods=['GET'])
+@application.route('/word-cloud', methods=['GET'])
 def word_cloud():
     return jsonify({'cloud': cloud})
 
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET'])
 def root():
-    return app.send_static_file('index.html')
+    return application.send_static_file('index.html')
 
-@app.route('/cnn-headlines', methods=['GET'])
+@application.route('/cnn-headlines', methods=['GET'])
 def get_cnn_headlines():
     return jsonify({'headlines': cnn_headlines})
 
-@app.route('/fox-headlines', methods=['GET'])
+@application.route('/fox-headlines', methods=['GET'])
 def get_fox_headlines():
     return jsonify({'headlines': fox_headlines})
 
-@app.route('/slide-headlines', methods=['GET'])
+@application.route('/slide-headlines', methods=['GET'])
 def get_carousel_headlines():
     return jsonify({'headlines': slide_headlines})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    application.run(debug=True)
