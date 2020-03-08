@@ -237,8 +237,67 @@ function search_page() {
     document.getElementById("google-btn").className = "not-selected";
     document.getElementById("search-btn").className = "selected";
 
-    var html = "<h1>It works.</h1>"
+    var html = '<form id="form" name="form" method="GET">';
+    html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    html += '<input type="text" id="keyword" name="keyword" required />';
+    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From<span style="color:red;">&nbsp;*&nbsp;</span>';
+    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" id="from" name="from" required />';
+    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To<span style="color:red;">&nbsp;*&nbsp;</span>';
+    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="date" id="to" name="to" required /></div>';
+    html += '<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Category  &nbsp;&nbsp;&nbsp;';
+    html += '<select name="category" id="category">';
+    html += '<option value="all" selected>All</option><option value="business">Business</option>';
+    html += '<option value="entertainment">Entertainment</option><option value="general">General</option>';
+    html += '<option value="health">Health</option><option value="science">Science</option>';
+    html += '<option value="sports">Sports</option><option value="technology">Technology</option></select>';
+    html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Source  &nbsp;&nbsp;&nbsp;';
+    html += '<select name="source" id="source">';
+    html += '<option value="all" selected>All</option></select></div>';
+    html += '<div><input class="button" type="button" value="Search"/>&nbsp;&nbsp;&nbsp;';
+    html += '<input class="button" type="button" value="Clear"/></div></form>';
+
+    var jsonObj;
+    var URL = "/slide-headlines";
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", URL, false);
+    try {
+        xmlhttp.send();
+    }
+    catch(sendError) {
+        alert(sendError.message);
+    }
+
+    if(xmlhttp.status == 404){
+        alert("Error: Unable to load file");
+    }
+    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+            jsonObj = JSON.parse(xmlhttp.responseText);
+        }
+        catch(parseError) {
+            alert(parseError);
+        }
+    }
+
+    var sources = {};
+
+    for (var article in jsonObj.headlines.articles) {
+        sources[jsonObj.headlines.articles[article].source.name] = 1;
+    }
 
     document.getElementById("main").innerHTML = html;
+    document.getElementById("keyword").focus();
+
+    for(var source in sources) {
+        var x = document.getElementById("source");
+        var option = document.createElement("option");
+        option.text = source;
+        option.id = source;
+        option.name = source;
+        x.add(option);
+    }
+    
+
 
 }
