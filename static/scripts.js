@@ -384,6 +384,12 @@ function search() {
         }
     }
 
+    if(queryObj.error) {
+        var msg = queryObj.error.slice(queryObj.error.search("message")+11, queryObj.error.search("}")-1);
+        alert(msg);
+        return;
+    }
+
     console.log(queryObj);
 
 }

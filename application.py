@@ -65,11 +65,14 @@ def query():
     to_date = request.args.get('to')
     category = request.args.get('category')
     source = request.args.get('source')
-    if source == 'all':
-        result = newsapi.get_everything(q=keyword, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
-    else:
-        result = newsapi.get_everything(q=keyword, sources=source, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
-    return jsonify({'query': result})
+    try:
+        if source == 'all':
+            result = newsapi.get_everything(q=keyword, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
+        else:
+            result = newsapi.get_everything(q=keyword, sources=source, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
+        return jsonify({'query': result})
+    except Exception as error:
+        return jsonify({'error': str(error)})
 
 if __name__ == '__main__':
     application.run(debug=True)
