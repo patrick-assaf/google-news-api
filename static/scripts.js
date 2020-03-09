@@ -1,6 +1,23 @@
 
 var timer;
 
+function isvalid(value) {
+    return (value !== null && value !== '' && value !== undefined);
+}
+
+function cutoff(string) {
+    var char = 80;
+    if(string.length <= 80) {
+        return string;
+    }
+    else {
+        while(string[char] !== ' ') {
+            char += 1;
+        }
+        return string.substring(0, char);
+    }
+}
+
 function google_news() {
 
     if(document.getElementById("google-btn").className !== "selected") {
@@ -112,13 +129,13 @@ function google_news() {
         var cnn = cnnObj.headlines.articles;
         var j = 0;
         while(cnn_count < 4) {
-            if(cnn[j].description != null && cnn[j].content != null && cnn[j].urlToImage != null
-                && cnn[j].author != null && cnn[j].title != null && cnn[j].url != null
-                && cnn[j].publishedAt != null && cnn[j].source != null) {
+            if(isvalid(cnn[j].description) && isvalid(cnn[j].content) && isvalid(cnn[j].urlToImage)
+                && isvalid(cnn[j].author) && isvalid(cnn[j].title) && isvalid(cnn[j].url)
+                && isvalid(cnn[j].publishedAt) && isvalid(cnn[j].source)) {
                 cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[j].url + '" target="_blank">';
-                cnn_content += '<img src="' + cnnObj.headlines.articles[j].urlToImage + '">';
+                cnn_content += '<img alt="" src="' + cnnObj.headlines.articles[j].urlToImage + '">';
                 cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[j].title + '</b></h4>'
-                cnn_content += '<p>' + cnnObj.headlines.articles[j].description +'</p></div></a></div>';
+                cnn_content += '<p>' + cnnObj.headlines.articles[j].description.replace(/</g, " ") +'</p></div></a></div>';
                 cnn_count += 1;
                 j += 1;
             }
@@ -157,13 +174,13 @@ function google_news() {
         var fox = foxObj.headlines.articles;
         var i = 0;
         while(fox_count < 4) {
-            if(fox[i].description != null && fox[i].content != null && fox[i].urlToImage != null
-                && fox[i].author != null && fox[i].title != null && fox[i].url != null
-                && fox[i].publishedAt != null && fox[i].source != null) {
+            if(isvalid(fox[i].description) && isvalid(fox[i].content) && isvalid(fox[i].urlToImage)
+                && isvalid(fox[i].author) && isvalid(fox[i].title) && isvalid(fox[i].url)
+                && isvalid(fox[i].publishedAt) && isvalid(fox[i].source)) {
                 fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
-                fox_content += '<img src="' + foxObj.headlines.articles[i].urlToImage + '">';
+                fox_content += '<img alt="" src="' + foxObj.headlines.articles[i].urlToImage + '">';
                 fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
-                fox_content += '<p>' + foxObj.headlines.articles[i].description +'</p></div></a></div>';
+                fox_content += '<p>' + foxObj.headlines.articles[i].description.replace(/</g, " ") +'</p></div></a></div>';
                 fox_count += 1;
                 i += 1;
             }
@@ -206,14 +223,14 @@ function google_news() {
             var  i = 1;
             var articles = slideObj.headlines.articles;
             while(slide_count < 5) {
-                if(articles[i].description == null || articles[i].content == null || articles[i].urlToImage == null
-                    || articles[i].author == null || articles[i].title == null || articles[i].url == null
-                    || articles[i].publishedAt == null || articles[i].source == null) {
+                if(isvalid(articles[i].description) && isvalid(articles[i].content) && isvalid(articles[i].urlToImage)
+                    && isvalid(articles[i].author) && isvalid(articles[i].title) && isvalid(articles[i].url)
+                    && isvalid(articles[i].publishedAt) && isvalid(articles[i].source)) {
+                        selectObj[slide_count] = slideObj.headlines.articles[i];
+                        slide_count += 1;
                         i += 1;
                 }
                 else {
-                    selectObj[slide_count] = slideObj.headlines.articles[i];
-                    slide_count += 1;
                     i += 1;
                 }
             }
@@ -222,7 +239,7 @@ function google_news() {
 
         function showSlides() {
             var slide = '';
-            slide += '<a href="' + selectObj[index].url + '" target="_blank"><img src="' + selectObj[index].urlToImage + '">';
+            slide += '<a href="' + selectObj[index].url + '" target="_blank"><img alt="" src="' + selectObj[index].urlToImage + '">';
             slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
 
             if(document.getElementById("carousel") !== null) {
@@ -255,7 +272,7 @@ function search_page() {
         document.getElementById("google-btn").className = "not-selected";
         document.getElementById("search-btn").className = "selected";
 
-        var html = '<form id="form" name="form" onsubmit="search();return false">';
+        var html = '<div><form id="form" name="form" onsubmit="search();return false">';
         html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;';
         html += '<input autocomplete="off" type="text" id="keyword" name="keyword" required />';
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From<span style="color:red;">&nbsp;*&nbsp;</span>';
@@ -272,7 +289,8 @@ function search_page() {
         html += '<select name="source" id="source">';
         html += '<option value="all" selected>All</option></select></div>';
         html += '<div><input class="button" type="submit" value="Search"/>&nbsp;&nbsp;&nbsp;';
-        html += '<input class="button" type="button" value="Clear" onclick="refresh()"/></div></form>';
+        html += '<input class="button" type="button" value="Clear" onclick="refresh()"/></div></form></div>';
+        html += '<div id="query-results"></div>';
 
         document.getElementById("main").innerHTML = html;
         document.getElementById("keyword").focus();
@@ -384,9 +402,52 @@ function search() {
 
     console.log(queryObj);
 
+    var page = '';
+    var query = queryObj.query.articles;
+    var count = 0;
+    var max;
+    var i = 0;
+    if(queryObj.query.articles.length === 0) {
+        document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
+        return;
+    }
+    else if(queryObj.query.articles.length < 5) {
+        max = queryObj.query.articles.length;
+    }
+    else {
+        max = 5;
+    }
+    while(count < max && i < queryObj.query.articles.length) {
+        if(isvalid(query[i])) {
+            if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage)
+            && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url)
+            && isvalid(query[i].publishedAt) && isvalid(query[i].source)) {
+                page += '<div class="query-card"><a href="' + query[i].url + '" target="_blank">';
+                page += '<img alt="" src="' + query[i].urlToImage + '">';
+                page += '<div class="query-container"><h4><b>' + query[i].title + '</b></h4>'
+                page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></a></div>';
+                count += 1;
+                i += 1;
+            }
+            else {
+                i += 1;
+            }
+        }
+        else {
+            i += 1;
+        }
+    }
+
+    if(queryObj.query.articles.length > 5 && count === 5) {
+        page += '<div><button class="show-more" type="button">Show More</button></div>';
+    }
+
+    document.getElementById("query-results").innerHTML = page;
+
 }
 
 function refresh() {
     document.getElementById("search-btn").className = "not-selected";
+    document.getElementById("query-results").innerHTML = '';
     search_page();
 }
