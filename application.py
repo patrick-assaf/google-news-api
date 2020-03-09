@@ -8,6 +8,7 @@ newsapi = NewsApiClient(api_key='2108471b175647ec9f491085b681aafe')
 cnn_headlines = newsapi.get_top_headlines(sources="cnn", language="en")
 fox_headlines = newsapi.get_top_headlines(sources="fox-news", language="en")
 slide_headlines = newsapi.get_top_headlines(language="en", page_size=30)
+sources = newsapi.get_sources(language="en")
 
 titles = ''
 for article in slide_headlines["articles"]:
@@ -52,6 +53,20 @@ def get_fox_headlines():
 @application.route('/slide-headlines', methods=['GET'])
 def get_carousel_headlines():
     return jsonify({'headlines': slide_headlines})
+
+@application.route('/sources', methods=['GET'])
+def get_sources():
+    return jsonify({'sources': sources})
+
+@application.route('/query', methods=['GET'])
+def query():
+    keyword = request.args.get('keyword')
+    from_date = request.args.get('from')
+    to_date = request.args.get('to')
+    category = request.args.get('category')
+    source = request.args.get('source')
+
+    return jsonify({'keyword': keyword, 'from': from_date, 'to': to_date, 'category': category, 'source': source})
 
 if __name__ == '__main__':
     application.run(debug=True)

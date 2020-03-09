@@ -263,7 +263,7 @@ function search_page() {
         document.getElementById("google-btn").className = "not-selected";
         document.getElementById("search-btn").className = "selected";
 
-        var html = '<form id="form" name="form">';
+        var html = '<form id="form" name="form" onsubmit="search();return false">';
         html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;';
         html += '<input autocomplete="off" type="text" id="keyword" name="keyword" required />';
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From<span style="color:red;">&nbsp;*&nbsp;</span>';
@@ -279,11 +279,11 @@ function search_page() {
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Source  &nbsp;&nbsp;&nbsp;';
         html += '<select name="source" id="source">';
         html += '<option value="all" selected>All</option></select></div>';
-        html += '<div><input class="button" type="submit" value="Search" onsubmit="search()"/>&nbsp;&nbsp;&nbsp;';
+        html += '<div><input class="button" type="submit" value="Search"/>&nbsp;&nbsp;&nbsp;';
         html += '<input class="button" type="button" value="Clear" onclick="refresh()"/></div></form>';
 
         var jsonObj;
-        var URL = "/slide-headlines";
+        var URL = "/sources";
 
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", URL, false);
@@ -306,16 +306,16 @@ function search_page() {
             }
         }
 
-        var sources = {};
+        var src = {};
 
-        for (var article in jsonObj.headlines.articles) {
-            sources[jsonObj.headlines.articles[article].source.name] = 1;
+        for (var source in jsonObj.sources.sources) {
+            src[jsonObj.sources.sources[source].name] = 1;
         }
 
         document.getElementById("main").innerHTML = html;
         document.getElementById("keyword").focus();
 
-        for(var source in sources) {
+        for(var source in src) {
             var x = document.getElementById("source");
             var option = document.createElement("option");
             option.text = source;
@@ -333,15 +333,46 @@ function search_page() {
 
 }
 
+
 function search() {
+
     if(document.getElementById("to").value < document.getElementById("from").value) {
         alert('Incorrect time');
         return;
     }
-    else {
-        alert('No error detected');
-        return;
+
+    var queryObj;
+
+    var keyword = document.getElementById('keyword').value;
+    var from_date = document.getElementById('from').value;
+    var to_date = document.getElementById('to').value;
+    var category = document.getElementById('category').value;
+    var source = document.getElementById('source').value;
+    var queryURL = '/query?keyword=' + keyword + '&from=' + from_date + '&to=' + to_date + '&category=' + category + '&source=' + source;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", queryURL, false);
+    try {
+        xmlhttp.send();
     }
+    catch(sendError) {
+        alert(sendError.message);
+    }
+
+    if(xmlhttp.status == 404){
+        alert("Error: Unable to load file");
+    }
+    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+            queryObj = JSON.parse(xmlhttp.responseText);
+        }
+        catch(parseError) {
+            alert(parseError);
+        }
+    }
+
+    console.log(queryObj);
+    
 }
 
 function refresh() {
