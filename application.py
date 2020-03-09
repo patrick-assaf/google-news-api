@@ -8,7 +8,7 @@ newsapi = NewsApiClient(api_key='2108471b175647ec9f491085b681aafe')
 cnn_headlines = newsapi.get_top_headlines(sources="cnn", language="en")
 fox_headlines = newsapi.get_top_headlines(sources="fox-news", language="en")
 slide_headlines = newsapi.get_top_headlines(language="en", page_size=30)
-sources = newsapi.get_sources(language="en")
+sources = newsapi.get_sources(language="en", country="us")
 
 titles = ''
 for article in slide_headlines["articles"]:
@@ -65,8 +65,11 @@ def query():
     to_date = request.args.get('to')
     category = request.args.get('category')
     source = request.args.get('source')
-
-    return jsonify({'keyword': keyword, 'from': from_date, 'to': to_date, 'category': category, 'source': source})
+    if source == 'all':
+        result = newsapi.get_everything(q=keyword, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
+    else:
+        result = newsapi.get_everything(q=keyword, sources=source, from_param=from_date, to=to_date, language='en', sort_by='publishedAt', page_size=30)
+    return jsonify({'query': result})
 
 if __name__ == '__main__':
     application.run(debug=True)

@@ -326,13 +326,13 @@ function get_sources(category) {
     if(value !== 'all') {
         for (var source in jsonObj.sources.sources) {
             if(jsonObj.sources.sources[source].category === value) {
-                src[jsonObj.sources.sources[source].name] = 1;
+                src[jsonObj.sources.sources[source].name] = jsonObj.sources.sources[source].id;
             }
         }
     }
     else {
         for (var source in jsonObj.sources.sources) {
-            src[jsonObj.sources.sources[source].name] = 1;
+            src[jsonObj.sources.sources[source].name] = jsonObj.sources.sources[source].id;
         }
     }
 
@@ -342,8 +342,7 @@ function get_sources(category) {
         var x = document.getElementById("source");
         var option = document.createElement("option");
         option.text = source;
-        option.id = source;
-        option.name = source;
+        option.value = src[source];
         x.add(option);
     }
 }
