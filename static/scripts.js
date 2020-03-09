@@ -1,5 +1,5 @@
 
-var status_change = 0;
+var timer;
 
 function google_news() {
 
@@ -221,35 +221,27 @@ function google_news() {
         }
 
         function showSlides() {
-            if(document.getElementById("google-btn").className === "selected" && status_change !== 1) {
-                var slide = '';
-                slide += '<a href="' + selectObj[index].url + '" target="_blank"><img src="' + selectObj[index].urlToImage + '">';
-                slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
+            var slide = '';
+            slide += '<a href="' + selectObj[index].url + '" target="_blank"><img src="' + selectObj[index].urlToImage + '">';
+            slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
 
-                if(document.getElementById("carousel") !== null) {
-                    document.getElementById("carousel").innerHTML = slide;
-                }
-                if(document.getElementById("img-title") !== null) {
-                    document.getElementById("img-title").innerHTML = selectObj[index].title;
-                }
-                if(document.getElementById("img-txt") !== null) {
-                    document.getElementById("img-txt").innerHTML = selectObj[index].description;
-                }
+            if(document.getElementById("carousel") !== null) {
+                document.getElementById("carousel").innerHTML = slide;
+            }
+            if(document.getElementById("img-title") !== null) {
+                document.getElementById("img-title").innerHTML = selectObj[index].title;
+            }
+            if(document.getElementById("img-txt") !== null) {
+                document.getElementById("img-txt").innerHTML = selectObj[index].description;
+            }
 
-                if(index == 4) {
-                    index = 0;
-                }
-                else {
-                    index += 1;
-                }
-                setTimeout(showSlides, 5*1000);
+            if(index == 4) {
+                index = 0;
             }
             else {
-                status_change = 0;
-                if(document.getElementById("google-btn").className === "selected") {
-                    google_news();
-                }
+                index += 1;
             }
+            timer = setTimeout(showSlides, 5*1000);
         }
     }
 }
@@ -258,7 +250,7 @@ function search_page() {
 
     if(document.getElementById("search-btn").className !== "selected") {
 
-        status_change = 1;
+        clearTimeout(timer);
 
         document.getElementById("google-btn").className = "not-selected";
         document.getElementById("search-btn").className = "selected";
