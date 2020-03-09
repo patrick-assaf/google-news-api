@@ -263,9 +263,9 @@ function search_page() {
         document.getElementById("google-btn").className = "not-selected";
         document.getElementById("search-btn").className = "selected";
 
-        var html = '<form id="form" name="form" method="GET">';
+        var html = '<form id="form" name="form">';
         html += '<div>Keyword<span style="color:red;">&nbsp;*&nbsp;</span>&nbsp;&nbsp;&nbsp;';
-        html += '<input type="text" id="keyword" name="keyword" required />';
+        html += '<input autocomplete="off" type="text" id="keyword" name="keyword" required />';
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;From<span style="color:red;">&nbsp;*&nbsp;</span>';
         html += '&nbsp;&nbsp;&nbsp;<input type="date" id="from" name="from" required />';
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To<span style="color:red;">&nbsp;*&nbsp;</span>';
@@ -279,8 +279,8 @@ function search_page() {
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Source  &nbsp;&nbsp;&nbsp;';
         html += '<select name="source" id="source">';
         html += '<option value="all" selected>All</option></select></div>';
-        html += '<div><input class="button" type="button" value="Search"/>&nbsp;&nbsp;&nbsp;';
-        html += '<input class="button" type="button" value="Clear"/></div></form>';
+        html += '<div><input class="button" type="submit" value="Search" onsubmit="search()"/>&nbsp;&nbsp;&nbsp;';
+        html += '<input class="button" type="button" value="Clear" onclick="refresh()"/></div></form>';
 
         var jsonObj;
         var URL = "/slide-headlines";
@@ -331,5 +331,20 @@ function search_page() {
     document.getElementById("to").valueAsDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     document.getElementById("from").valueAsDate = last_week;
 
-    
+}
+
+function search() {
+    if(document.getElementById("to").value < document.getElementById("from").value) {
+        alert('Incorrect time');
+        return;
+    }
+    else {
+        alert('No error detected');
+        return;
+    }
+}
+
+function refresh() {
+    document.getElementById("search-btn").className = "not-selected";
+    search_page();
 }
