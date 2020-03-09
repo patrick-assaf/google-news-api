@@ -271,7 +271,7 @@ function search_page() {
         html += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To<span style="color:red;">&nbsp;*&nbsp;</span>';
         html += '&nbsp;&nbsp;&nbsp;<input type="date" id="to" name="to" required /></div>';
         html += '<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Category  &nbsp;&nbsp;&nbsp;';
-        html += '<select name="category" id="category">';
+        html += '<select name="category" id="category" onchange="get_sources(this)">';
         html += '<option value="all" selected>All</option><option value="business">Business</option>';
         html += '<option value="entertainment">Entertainment</option><option value="general">General</option>';
         html += '<option value="health">Health</option><option value="science">Science</option>';
@@ -282,57 +282,71 @@ function search_page() {
         html += '<div><input class="button" type="submit" value="Search"/>&nbsp;&nbsp;&nbsp;';
         html += '<input class="button" type="button" value="Clear" onclick="refresh()"/></div></form>';
 
-        var jsonObj;
-        var URL = "/sources";
-
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", URL, false);
-        try {
-            xmlhttp.send();
-        }
-        catch(sendError) {
-            alert(sendError.message);
-        }
-
-        if(xmlhttp.status == 404){
-            alert("Error: Unable to load file");
-        }
-        else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                jsonObj = JSON.parse(xmlhttp.responseText);
-            }
-            catch(parseError) {
-                alert(parseError);
-            }
-        }
-
-        var src = {};
-
-        for (var source in jsonObj.sources.sources) {
-            src[jsonObj.sources.sources[source].name] = 1;
-        }
-
         document.getElementById("main").innerHTML = html;
         document.getElementById("keyword").focus();
 
-        for(var source in src) {
-            var x = document.getElementById("source");
-            var option = document.createElement("option");
-            option.text = source;
-            option.id = source;
-            option.name = source;
-            x.add(option);
+        var today = new Date();
+        var last_week = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+        document.getElementById("to").valueAsDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        document.getElementById("from").valueAsDate = last_week;
+
+        get_sources(document.getElementById('category'));
+    }
+}
+
+function get_sources(category) {
+    var value = category.value;
+    var jsonObj;
+    var URL = "/sources";
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", URL, false);
+    try {
+        xmlhttp.send();
+    }
+    catch(sendError) {
+        alert(sendError.message);
+    }
+
+    if(xmlhttp.status == 404){
+        alert("Error: Unable to load file");
+    }
+    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        try {
+            jsonObj = JSON.parse(xmlhttp.responseText);
+        }
+        catch(parseError) {
+            alert(parseError);
         }
     }
 
-    var today = new Date();
-    var last_week = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+    var src = {};
 
-    document.getElementById("to").valueAsDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    document.getElementById("from").valueAsDate = last_week;
+    if(value !== 'all') {
+        for (var source in jsonObj.sources.sources) {
+            if(jsonObj.sources.sources[source].category === value) {
+                src[jsonObj.sources.sources[source].name] = 1;
+            }
+        }
+    }
+    else {
+        for (var source in jsonObj.sources.sources) {
+            src[jsonObj.sources.sources[source].name] = 1;
+        }
+    }
 
+    document.getElementById("source").innerHTML = '<option value="all" selected>All</option>';
+
+    for(var source in src) {
+        var x = document.getElementById("source");
+        var option = document.createElement("option");
+        option.text = source;
+        option.id = source;
+        option.name = source;
+        x.add(option);
+    }
 }
-
 
 function search() {
 
@@ -372,7 +386,7 @@ function search() {
     }
 
     console.log(queryObj);
-    
+
 }
 
 function refresh() {
