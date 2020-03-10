@@ -20,7 +20,6 @@ function cutoff(string) {
 }
 
 function google_news() {
-
     if(document.getElementById("google-btn").className !== "selected") {
         
         document.getElementById("google-btn").className = "selected";
@@ -265,7 +264,6 @@ function google_news() {
 }
 
 function search_page() {
-
     if(document.getElementById("search-btn").className !== "selected") {
 
         clearTimeout(timer);
@@ -359,7 +357,6 @@ function get_sources(category) {
 }
 
 function search() {
-
     if(document.getElementById("to").value < document.getElementById("from").value) {
         alert('Incorrect time');
         return;
@@ -443,7 +440,6 @@ function search() {
     }
 
     document.getElementById("query-results").innerHTML = page;
-
 }
 
 function show_more() {
@@ -475,23 +471,20 @@ function expand(id) {
         text += '<div class="query-container">';
         text += '<h3><b>' + query[id].title + '</b></h3>';
         text += '<p><b>Author:</b> ' + query[id].author + '</p>';
-        text += '<p><b>Source:</b> ' + query[id].source + '</p>';
-
+        text += '<p><b>Source:</b> ' + query[id].source.name + '</p>';
         var date = new Date(query[id].publishedAt);
         var show_date = ((date.getMonth()>8)?(date.getMonth()+1):('0'+(date.getMonth()+1)))+'/'+((date.getDate()>9)?date.getDate():('0'+date.getDate()))+'/'+date.getFullYear();
-
         text += '<p><b>Date:</b> ' + show_date + '</p>';
-
         text += '<p>' + query[id].description.replace(/</g, " ") + '</p>';
         text += '<p><a href="' + query[id].url + '" target="_blank">See Original Post</a></p>';
         elem.className = "expanded";
-        elem.onclick = null;
+        elem.onclick = "";
     }
     else {
         text += '<img alt="" src="' + query[id].urlToImage + '">';
         text += '<div class="query-container">';
         text += '<h3><b>' + query[id].title + '</b></h3>';
-        text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
+        text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div>';
         elem.className = "query-card";
         elem.onclick = "expand(this.id)";
     }
