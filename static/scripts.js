@@ -435,6 +435,11 @@ function search() {
         }
     }
 
+    if(queryObj.query.articles.length > 0 && count === 0) {
+        document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
+        return;
+    }
+
     if(queryObj.query.articles.length > 15 && count === 15) {
         page += '<div><button id="show-btn" class="show-more" type="button" onclick="show_more()">Show More</button></div>';
     }
