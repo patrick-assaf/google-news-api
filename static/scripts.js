@@ -19,6 +19,12 @@ function cutoff(string) {
     }
 }
 
+async function getData(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+}
+
 function google_news() {
     if(document.getElementById("google-btn").className !== "selected") {
         
@@ -369,82 +375,66 @@ function search() {
     var source = document.getElementById('source').value;
     var queryURL = '/query?keyword=' + keyword + '&from=' + from_date + '&to=' + to_date + '&category=' + category + '&source=' + source;
 
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", queryURL, false);
-    try {
-        xmlhttp.send();
-    }
-    catch(sendError) {
-        alert(sendError.message);
-    }
+    queryObj = getData(queryURL);
 
-    if(xmlhttp.status == 404){
-        alert("Error: Unable to load file");
-    }
-    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        try {
-            queryObj = JSON.parse(xmlhttp.responseText);
+    queryObj.then((queryObj) => {
+
+        if(queryObj.error) {
+            var msg = queryObj.error.slice(queryObj.error.search("message")+11, queryObj.error.search("}")-1);
+            alert(msg);
+            return;
         }
-        catch(parseError) {
-            alert(parseError);
+    
+        var page = '';
+        var query = queryObj.query.articles;
+        var count = 0;
+        var max = 15;
+        var i = 0;
+        if(queryObj.query.articles.length === 0) {
+            document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
+            return;
         }
-    }
-
-    if(queryObj.error) {
-        var msg = queryObj.error.slice(queryObj.error.search("message")+11, queryObj.error.search("}")-1);
-        alert(msg);
-        return;
-    }
-
-    var page = '';
-    var query = queryObj.query.articles;
-    var count = 0;
-    var max = 15;
-    var i = 0;
-    if(queryObj.query.articles.length === 0) {
-        document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
-        return;
-    }
-    else if(queryObj.query.articles.length < 15) {
-        max = queryObj.query.articles.length;
-    }
-    while(count < max && i < queryObj.query.articles.length) {
-        if(isvalid(query[i])) {
-            if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage)
-            && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url)
-            && isvalid(query[i].publishedAt) && isvalid(query[i].source)) {
-                if(count >= 5) {
-                    page += '<div class="hidden-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+        else if(queryObj.query.articles.length < 15) {
+            max = queryObj.query.articles.length;
+        }
+        while(count < max && i < queryObj.query.articles.length) {
+            if(isvalid(query[i])) {
+                if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage)
+                && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url)
+                && isvalid(query[i].publishedAt) && isvalid(query[i].source)) {
+                    if(count >= 5) {
+                        page += '<div class="hidden-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+                    }
+                    else {
+                        page += '<div class="card-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+                    }
+                    page += '<img alt="" src="' + query[i].urlToImage + '">';
+                    page += '<div class="query-container">';
+                    page += '<h3><b>' + query[i].title + '</b></h3>';
+                    page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
+                    count += 1;
+                    i += 1;
                 }
                 else {
-                    page += '<div class="card-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+                    i += 1;
                 }
-                page += '<img alt="" src="' + query[i].urlToImage + '">';
-                page += '<div class="query-container">';
-                page += '<h3><b>' + query[i].title + '</b></h3>';
-                page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
-                count += 1;
-                i += 1;
             }
             else {
                 i += 1;
             }
         }
-        else {
-            i += 1;
+    
+        if(queryObj.query.articles.length > 0 && count === 0) {
+            document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
+            return;
         }
-    }
-
-    if(queryObj.query.articles.length > 0 && count === 0) {
-        document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
-        return;
-    }
-
-    if(queryObj.query.articles.length > 15 && count === 15) {
-        page += '<div><button id="show-btn" class="show-more" type="button" onclick="show_more()">Show More</button></div>';
-    }
-
-    document.getElementById("query-results").innerHTML = page;
+    
+        if(queryObj.query.articles.length > 15 && count === 15) {
+            page += '<div><button id="show-btn" class="show-more" type="button" onclick="show_more()">Show More</button></div>';
+        }
+    
+        document.getElementById("query-results").innerHTML = page;
+    });
 }
 
 function show_more() {
@@ -467,34 +457,38 @@ function show_more() {
 }
 
 function expand(id) {
-    var elem = document.getElementById(id);
-    var query = queryObj.query.articles;
-    var text = '';
-    if(elem.className === "query-card") {
-        text += '<img class="icon" alt="" src="/static/x-icon.png" onclick="expand(this.parentElement.id)">';
-        text += '<img alt="" src="' + query[id].urlToImage + '">';
-        text += '<div class="query-container">';
-        text += '<h3><b>' + query[id].title + '</b></h3>';
-        text += '<p><b>Author:</b> ' + query[id].author + '</p>';
-        text += '<p><b>Source:</b> ' + query[id].source.name + '</p>';
-        var date = new Date(query[id].publishedAt);
-        var show_date = ((date.getMonth()>8)?(date.getMonth()+1):('0'+(date.getMonth()+1)))+'/'+((date.getDate()>9)?date.getDate():('0'+date.getDate()))+'/'+date.getFullYear();
-        text += '<p><b>Date:</b> ' + show_date + '</p>';
-        text += '<p>' + query[id].description.replace(/</g, " ") + '</p>';
-        text += '<p><a href="' + query[id].url + '" target="_blank">See Original Post</a></p>';
-        elem.className = "expanded";
-        elem.onclick = "";
-    }
-    else {
-        text += '<img alt="" src="' + query[id].urlToImage + '" onclick="expand(this.parentElement.id)">';
-        text += '<div class="query-container" onclick="expand(this.parentElement.id)">';
-        text += '<h3><b>' + query[id].title + '</b></h3>';
-        text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div>';
-        elem.className = "query-card";
-        elem.onclick = "expand(this.id)";
-    }
-    
-    elem.innerHTML = text;
+
+    queryObj.then((queryObj) => {
+
+        var elem = document.getElementById(id);
+        var query = queryObj.query.articles;
+        var text = '';
+        if(elem.className === "query-card") {
+            text += '<img class="icon" alt="" src="/static/x-icon.png" onclick="expand(this.parentElement.id)">';
+            text += '<img alt="" src="' + query[id].urlToImage + '">';
+            text += '<div class="query-container">';
+            text += '<h3><b>' + query[id].title + '</b></h3>';
+            text += '<p><b>Author:</b> ' + query[id].author + '</p>';
+            text += '<p><b>Source:</b> ' + query[id].source.name + '</p>';
+            var date = new Date(query[id].publishedAt);
+            var show_date = ((date.getMonth()>8)?(date.getMonth()+1):('0'+(date.getMonth()+1)))+'/'+((date.getDate()>9)?date.getDate():('0'+date.getDate()))+'/'+date.getFullYear();
+            text += '<p><b>Date:</b> ' + show_date + '</p>';
+            text += '<p>' + query[id].description.replace(/</g, " ") + '</p>';
+            text += '<p><a href="' + query[id].url + '" target="_blank">See Original Post</a></p>';
+            elem.className = "expanded";
+            elem.onclick = "";
+        }
+        else {
+            text += '<img alt="" src="' + query[id].urlToImage + '" onclick="expand(this.parentElement.id)">';
+            text += '<div class="query-container" onclick="expand(this.parentElement.id)">';
+            text += '<h3><b>' + query[id].title + '</b></h3>';
+            text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div>';
+            elem.className = "query-card";
+            elem.onclick = "expand(this.id)";
+        }
+        
+        elem.innerHTML = text;
+    });
 }
 
 function refresh() {
