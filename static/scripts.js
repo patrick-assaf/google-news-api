@@ -481,8 +481,8 @@ function expand(id) {
         elem.onclick = "";
     }
     else {
-        text += '<img alt="" src="' + query[id].urlToImage + '">';
-        text += '<div class="query-container">';
+        text += '<img alt="" src="' + query[id].urlToImage + '" onclick="expand(this.parentElement.id)">';
+        text += '<div class="query-container" onclick="expand(this.parentElement.id)">';
         text += '<h3><b>' + query[id].title + '</b></h3>';
         text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div>';
         elem.className = "query-card";
