@@ -1,5 +1,6 @@
 
 var timer;
+var queryObj;
 
 function isvalid(value) {
     return (value !== null && value !== '' && value !== undefined);
@@ -364,8 +365,6 @@ function search() {
         return;
     }
 
-    var queryObj;
-
     var keyword = document.getElementById('keyword').value;
     var from_date = document.getElementById('from').value;
     var to_date = document.getElementById('to').value;
@@ -400,32 +399,33 @@ function search() {
         return;
     }
 
-    console.log(queryObj);
-
     var page = '';
     var query = queryObj.query.articles;
     var count = 0;
-    var max;
+    var max = 15;
     var i = 0;
     if(queryObj.query.articles.length === 0) {
         document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
         return;
     }
-    else if(queryObj.query.articles.length < 5) {
+    else if(queryObj.query.articles.length < 15) {
         max = queryObj.query.articles.length;
-    }
-    else {
-        max = 5;
     }
     while(count < max && i < queryObj.query.articles.length) {
         if(isvalid(query[i])) {
             if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage)
             && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url)
             && isvalid(query[i].publishedAt) && isvalid(query[i].source)) {
-                page += '<div class="query-card"><a href="' + query[i].url + '" target="_blank">';
+                if(count >= 5) {
+                    page += '<div class="hidden-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+                }
+                else {
+                    page += '<div class="card-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
+                }
                 page += '<img alt="" src="' + query[i].urlToImage + '">';
-                page += '<div class="query-container"><h4><b>' + query[i].title + '</b></h4>'
-                page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></a></div>';
+                page += '<div class="query-container">';
+                page += '<h3><b>' + query[i].title + '</b></h3>';
+                page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
                 count += 1;
                 i += 1;
             }
@@ -438,12 +438,65 @@ function search() {
         }
     }
 
-    if(queryObj.query.articles.length > 5 && count === 5) {
-        page += '<div><button class="show-more" type="button">Show More</button></div>';
+    if(queryObj.query.articles.length > 15 && count === 15) {
+        page += '<div><button id="show-btn" class="show-more" type="button" onclick="show_more()">Show More</button></div>';
     }
 
     document.getElementById("query-results").innerHTML = page;
 
+}
+
+function show_more() {
+    if(document.getElementsByClassName("hidden-row")[0].style.display === "table-row") {
+        var x = document.getElementsByClassName("hidden-row");
+        var i;
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        document.getElementById("show-btn").innerHTML = "Show More";
+    }
+    else {
+        var x = document.getElementsByClassName("hidden-row");
+        var i;
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "table-row";
+        }
+        document.getElementById("show-btn").innerHTML = "Show Less";
+    }
+}
+
+function expand(id) {
+    var elem = document.getElementById(id);
+    var query = queryObj.query.articles;
+    var text = '';
+    if(elem.className === "query-card") {
+        text += '<img class="icon" alt="" src="/static/x-icon.png" onclick="expand(this.parentElement.id)">';
+        text += '<img alt="" src="' + query[id].urlToImage + '">';
+        text += '<div class="query-container">';
+        text += '<h3><b>' + query[id].title + '</b></h3>';
+        text += '<p><b>Author:</b> ' + query[id].author + '</p>';
+        text += '<p><b>Source:</b> ' + query[id].source + '</p>';
+
+        var date = new Date(query[id].publishedAt);
+        var show_date = ((date.getMonth()>8)?(date.getMonth()+1):('0'+(date.getMonth()+1)))+'/'+((date.getDate()>9)?date.getDate():('0'+date.getDate()))+'/'+date.getFullYear();
+
+        text += '<p><b>Date:</b> ' + show_date + '</p>';
+
+        text += '<p>' + query[id].description.replace(/</g, " ") + '</p>';
+        text += '<p><a href="' + query[id].url + '" target="_blank">See Original Post</a></p>';
+        elem.className = "expanded";
+        elem.onclick = null;
+    }
+    else {
+        text += '<img alt="" src="' + query[id].urlToImage + '">';
+        text += '<div class="query-container">';
+        text += '<h3><b>' + query[id].title + '</b></h3>';
+        text += '<p>' + cutoff(query[id].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
+        elem.className = "query-card";
+        elem.onclick = "expand(this.id)";
+    }
+    
+    elem.innerHTML = text;
 }
 
 function refresh() {
