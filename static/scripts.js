@@ -149,6 +149,7 @@ function google_news() {
         var slideObj = getData(slideURL);
 
         slideObj.then((slideObj) => {
+
             var slide_count = 0;
             var  i = 1;
             var articles = slideObj.headlines.articles;
