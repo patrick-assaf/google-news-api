@@ -37,194 +37,118 @@ function google_news() {
 
         document.getElementById("main").innerHTML = html;
 
-        var cloudObj;
         var cloudURL = '/word-cloud';
+        var cloudObj = getData(cloudURL);
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", cloudURL, false);
-        try {
-            xmlhttp.send();
-        }
-        catch(sendError) {
-            alert(sendError.message);
-        }
+        cloudObj.then((cloudObj) => {
 
-        if(xmlhttp.status == 404){
-            alert("Error: Unable to load file");
-        }
-        else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                cloudObj = JSON.parse(xmlhttp.responseText);
+            var myWords = [];
+            var keys = Object.keys(cloudObj.cloud);
+            var x = 0;
+            for(var word in cloudObj.cloud) {
+                myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*(14-cloudObj.cloud[word])};
+                x += 1;
             }
-            catch(parseError) {
-                alert(parseError);
+
+            var margin = {top: 0, right: 0, bottom: 0, left: 0},
+                width = 370 - margin.left - margin.right,
+                height = 300 - margin.top - margin.bottom;
+
+            var svg = d3.select("#cloud").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            var layout = d3.layout.cloud()
+            .size([width, height])
+            .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
+            .padding(5)
+            .rotate(function() { return ~~(Math.random() * 2) * 90; })
+            .fontSize(function(d) { return d.size; })
+            .on("end", draw);
+            layout.start();
+
+            function draw(words) {
+            svg
+                .append("g")
+                .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+                .selectAll("text")
+                    .data(words)
+                .enter().append("text")
+                    .style("font-size", function(d) { return d.size + "px"; })
+                    .style("fill", "#69b3a2")
+                    .attr("text-anchor", "middle")
+                    .style("font-family", "Impact")
+                    .style('fill', 'black')
+                    .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                    })
+                    .text(function(d) { return d.text; });
             }
-        }
+        });
 
-        var myWords = [];
-        var keys = Object.keys(cloudObj.cloud);
-        var x = 0;
-        for(var word in cloudObj.cloud) {
-            myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*(14-cloudObj.cloud[word])};
-            x += 1;
-        }
-
-        var margin = {top: 0, right: 0, bottom: 0, left: 0},
-            width = 370 - margin.left - margin.right,
-            height = 300 - margin.top - margin.bottom;
-
-        var svg = d3.select("#cloud").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        var layout = d3.layout.cloud()
-        .size([width, height])
-        .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))
-        .padding(5)
-        .rotate(function() { return ~~(Math.random() * 2) * 90; })
-        .fontSize(function(d) { return d.size; })
-        .on("end", draw);
-        layout.start();
-
-        function draw(words) {
-        svg
-            .append("g")
-            .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
-            .selectAll("text")
-                .data(words)
-            .enter().append("text")
-                .style("font-size", function(d) { return d.size + "px"; })
-                .style("fill", "#69b3a2")
-                .attr("text-anchor", "middle")
-                .style("font-family", "Impact")
-                .style('fill', 'black')
-                .attr("transform", function(d) {
-                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-                })
-                .text(function(d) { return d.text; });
-        }
-
-        var cnnObj;
         var cnnURL = '/cnn-headlines';
+        var cnnObj = getData(cnnURL);
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", cnnURL, false);
-        try {
-            xmlhttp.send();
-        }
-        catch(sendError) {
-            alert(sendError.message);
-        }
+        cnnObj.then((cnnObj) => {
 
-        if(xmlhttp.status == 404){
-            alert("Error: Unable to load file");
-        }
-        else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                cnnObj = JSON.parse(xmlhttp.responseText);
+            var cnn_content = '';
+            var cnn_count = 0;
+            var cnn = cnnObj.headlines.articles;
+            var j = 0;
+            while(cnn_count < 4) {
+                if(isvalid(cnn[j].description) && isvalid(cnn[j].content) && isvalid(cnn[j].urlToImage)
+                    && isvalid(cnn[j].author) && isvalid(cnn[j].title) && isvalid(cnn[j].url)
+                    && isvalid(cnn[j].publishedAt) && isvalid(cnn[j].source)) {
+                    cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[j].url + '" target="_blank">';
+                    cnn_content += '<img alt="" src="' + cnnObj.headlines.articles[j].urlToImage + '">';
+                    cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[j].title + '</b></h4>'
+                    cnn_content += '<p>' + cnnObj.headlines.articles[j].description.replace(/</g, " ") +'</p></div></a></div>';
+                    cnn_count += 1;
+                    j += 1;
+                }
+                else {
+                    j += 1;
+                }
             }
-            catch(parseError) {
-                alert(parseError);
-            }
-        }
+            document.getElementById("cnn").innerHTML = cnn_content;
+        });
 
-        var cnn_content = '';
-        var cnn_count = 0;
-        var cnn = cnnObj.headlines.articles;
-        var j = 0;
-        while(cnn_count < 4) {
-            if(isvalid(cnn[j].description) && isvalid(cnn[j].content) && isvalid(cnn[j].urlToImage)
-                && isvalid(cnn[j].author) && isvalid(cnn[j].title) && isvalid(cnn[j].url)
-                && isvalid(cnn[j].publishedAt) && isvalid(cnn[j].source)) {
-                cnn_content += '<div class="card"><a href="' + cnnObj.headlines.articles[j].url + '" target="_blank">';
-                cnn_content += '<img alt="" src="' + cnnObj.headlines.articles[j].urlToImage + '">';
-                cnn_content += '<div class="container"><h4><b>' + cnnObj.headlines.articles[j].title + '</b></h4>'
-                cnn_content += '<p>' + cnnObj.headlines.articles[j].description.replace(/</g, " ") +'</p></div></a></div>';
-                cnn_count += 1;
-                j += 1;
-            }
-            else {
-                j += 1;
-            }
-        }
-        document.getElementById("cnn").innerHTML = cnn_content;
-
-        var foxObj;
         var foxURL = '/fox-headlines';
+        var foxObj = getData(foxURL);
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", foxURL, false);
-        try {
-            xmlhttp.send();
-        }
-        catch(sendError) {
-            alert(sendError.message);
-        }
+        foxObj.then((foxObj) => {
 
-        if(xmlhttp.status == 404){
-            alert("Error: Unable to load file");
-        }
-        else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                foxObj = JSON.parse(xmlhttp.responseText);
+            var fox_content = '';
+            var fox_count = 0;
+            var fox = foxObj.headlines.articles;
+            var i = 0;
+            while(fox_count < 4) {
+                if(isvalid(fox[i].description) && isvalid(fox[i].content) && isvalid(fox[i].urlToImage)
+                    && isvalid(fox[i].author) && isvalid(fox[i].title) && isvalid(fox[i].url)
+                    && isvalid(fox[i].publishedAt) && isvalid(fox[i].source)) {
+                    fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
+                    fox_content += '<img alt="" src="' + foxObj.headlines.articles[i].urlToImage + '">';
+                    fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
+                    fox_content += '<p>' + foxObj.headlines.articles[i].description.replace(/</g, " ") +'</p></div></a></div>';
+                    fox_count += 1;
+                    i += 1;
+                }
+                else {
+                    i += 1;
+                }
             }
-            catch(parseError) {
-                alert(parseError);
-            }
-        }
+            document.getElementById("fox").innerHTML = fox_content;
+        });
 
-        var fox_content = '';
-        var fox_count = 0;
-        var fox = foxObj.headlines.articles;
-        var i = 0;
-        while(fox_count < 4) {
-            if(isvalid(fox[i].description) && isvalid(fox[i].content) && isvalid(fox[i].urlToImage)
-                && isvalid(fox[i].author) && isvalid(fox[i].title) && isvalid(fox[i].url)
-                && isvalid(fox[i].publishedAt) && isvalid(fox[i].source)) {
-                fox_content += '<div class="card"><a href="' + foxObj.headlines.articles[i].url + '" target="_blank">';
-                fox_content += '<img alt="" src="' + foxObj.headlines.articles[i].urlToImage + '">';
-                fox_content += '<div class="container"><h4><b>' + foxObj.headlines.articles[i].title + '</b></h4>'
-                fox_content += '<p>' + foxObj.headlines.articles[i].description.replace(/</g, " ") +'</p></div></a></div>';
-                fox_count += 1;
-                i += 1;
-            }
-            else {
-                i += 1;
-            }
-        }
-        document.getElementById("fox").innerHTML = fox_content;
-
-        var slideObj;
-        var selectObj = [5];
         var slideURL = "/slide-headlines";
-
+        var selectObj = [5];
         var index = 0;
+        
+        var slideObj = getData(slideURL);
 
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", slideURL, false);
-        try {
-            xmlhttp.send();
-        }
-        catch(sendError) {
-            alert(sendError.message);
-        }
-
-        if(xmlhttp.status == 404){
-            alert("Error: Unable to load file");
-        }
-        else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            try {
-                slideObj = JSON.parse(xmlhttp.responseText);
-                getSlides();
-            }
-            catch(parseError) {
-                alert(parseError);
-            }
-        }
-
-        function getSlides() {
+        slideObj.then((slideObj) => {
             var slide_count = 0;
             var  i = 1;
             var articles = slideObj.headlines.articles;
@@ -240,32 +164,33 @@ function google_news() {
                     i += 1;
                 }
             }
+
             showSlides();
-        }
-
-        function showSlides() {
-            var slide = '';
-            slide += '<a href="' + selectObj[index].url + '" target="_blank"><img alt="" src="' + selectObj[index].urlToImage + '">';
-            slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
-
-            if(document.getElementById("carousel") !== null) {
-                document.getElementById("carousel").innerHTML = slide;
+    
+            function showSlides() {
+                var slide = '';
+                slide += '<a href="' + selectObj[index].url + '" target="_blank"><img alt="" src="' + selectObj[index].urlToImage + '">';
+                slide += '<div class="img-write"><h3 id="img-title"></h3><p id="img-txt"></p></div></a>';
+    
+                if(document.getElementById("carousel") !== null) {
+                    document.getElementById("carousel").innerHTML = slide;
+                }
+                if(document.getElementById("img-title") !== null) {
+                    document.getElementById("img-title").innerHTML = selectObj[index].title;
+                }
+                if(document.getElementById("img-txt") !== null) {
+                    document.getElementById("img-txt").innerHTML = selectObj[index].description;
+                }
+    
+                if(index == 4) {
+                    index = 0;
+                }
+                else {
+                    index += 1;
+                }
+                timer = setTimeout(showSlides, 5*1000);
             }
-            if(document.getElementById("img-title") !== null) {
-                document.getElementById("img-title").innerHTML = selectObj[index].title;
-            }
-            if(document.getElementById("img-txt") !== null) {
-                document.getElementById("img-txt").innerHTML = selectObj[index].description;
-            }
-
-            if(index == 4) {
-                index = 0;
-            }
-            else {
-                index += 1;
-            }
-            timer = setTimeout(showSlides, 5*1000);
-        }
+        });        
     }
 }
 
@@ -312,54 +237,34 @@ function search_page() {
 
 function get_sources(category) {
     var value = category.value;
-    var jsonObj;
     var URL = "/sources";
 
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", URL, false);
-    try {
-        xmlhttp.send();
-    }
-    catch(sendError) {
-        alert(sendError.message);
-    }
+    var jsonObj = getData(URL);
 
-    if(xmlhttp.status == 404){
-        alert("Error: Unable to load file");
-    }
-    else if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        try {
-            jsonObj = JSON.parse(xmlhttp.responseText);
+    jsonObj.then((jsonObj) => {
+
+        var src = {};
+        if(value !== 'all') {
+            for (var source in jsonObj.sources.sources) {
+                if(jsonObj.sources.sources[source].category === value) {
+                    src[jsonObj.sources.sources[source].name] = jsonObj.sources.sources[source].id;
+                }
+            }
         }
-        catch(parseError) {
-            alert(parseError);
-        }
-    }
-
-    var src = {};
-
-    if(value !== 'all') {
-        for (var source in jsonObj.sources.sources) {
-            if(jsonObj.sources.sources[source].category === value) {
+        else {
+            for (var source in jsonObj.sources.sources) {
                 src[jsonObj.sources.sources[source].name] = jsonObj.sources.sources[source].id;
             }
         }
-    }
-    else {
-        for (var source in jsonObj.sources.sources) {
-            src[jsonObj.sources.sources[source].name] = jsonObj.sources.sources[source].id;
+        document.getElementById("source").innerHTML = '<option value="all" selected>All</option>';
+        for(var source in src) {
+            var x = document.getElementById("source");
+            var option = document.createElement("option");
+            option.text = source;
+            option.value = src[source];
+            x.add(option);
         }
-    }
-
-    document.getElementById("source").innerHTML = '<option value="all" selected>All</option>';
-
-    for(var source in src) {
-        var x = document.getElementById("source");
-        var option = document.createElement("option");
-        option.text = source;
-        option.value = src[source];
-        x.add(option);
-    }
+    });
 }
 
 function search() {
