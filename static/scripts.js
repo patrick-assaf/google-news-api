@@ -294,7 +294,7 @@ function search() {
         var query = queryObj.query.articles;
         var count = 0;
         var max = 15;
-        var i = 0;
+        var i;
         if(queryObj.query.articles.length === 0) {
             document.getElementById("query-results").innerHTML = '<div><p>No results</p></div>';
             return;
@@ -302,30 +302,25 @@ function search() {
         else if(queryObj.query.articles.length < 15) {
             max = queryObj.query.articles.length;
         }
-        while(count < max && i < queryObj.query.articles.length) {
-            if(isvalid(query[i])) {
-                if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage)
-                && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url)
+
+        for(i = 0; i < queryObj.query.articles.length; i++) {
+            if(count >= max) {
+                break;
+            }
+            else if(isvalid(query[i].description) && isvalid(query[i].content) && isvalid(query[i].urlToImage) 
+                && isvalid(query[i].author) && isvalid(query[i].title) && isvalid(query[i].url) 
                 && isvalid(query[i].publishedAt) && isvalid(query[i].source)) {
-                    if(count >= 5) {
-                        page += '<div class="hidden-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
-                    }
-                    else {
-                        page += '<div class="card-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
-                    }
-                    page += '<img alt="" src="' + query[i].urlToImage + '">';
-                    page += '<div class="query-container">';
-                    page += '<h3><b>' + query[i].title + '</b></h3>';
-                    page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
-                    count += 1;
-                    i += 1;
+                if(count >= 5) {
+                    page += '<div class="hidden-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
                 }
                 else {
-                    i += 1;
+                    page += '<div class="card-row"><div class="query-card" id="' + i + '" onclick="expand(this.id)">';
                 }
-            }
-            else {
-                i += 1;
+                page += '<img alt="" src="' + query[i].urlToImage + '">';
+                page += '<div class="query-container">';
+                page += '<h3><b>' + query[i].title + '</b></h3>';
+                page += '<p>' + cutoff(query[i].description).replace(/</g, " ") + ' ...' + '</p></div></div></div>';
+                count += 1;
             }
         }
     
