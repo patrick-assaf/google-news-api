@@ -12,7 +12,7 @@ function cutoff(string) {
         return string;
     }
     else {
-        while(string[char] !== ' ') {
+        while(string[char] !== ' ' && char < 90) {
             char += 1;
         }
         return string.substring(0, char);
