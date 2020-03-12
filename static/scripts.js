@@ -330,7 +330,7 @@ function search() {
             return;
         }
     
-        if(queryObj.query.articles.length > 15 && count === 15) {
+        if(queryObj.query.articles.length > 5 && count >= 5) {
             page += '<div><button id="show-btn" class="show-more" type="button" onclick="show_more()">Show More</button></div>';
         }
     
