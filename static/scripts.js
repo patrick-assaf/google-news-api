@@ -46,7 +46,12 @@ function google_news() {
             var keys = Object.keys(cloudObj.cloud);
             var x = 0;
             for(var word in cloudObj.cloud) {
-                myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*(14-cloudObj.cloud[word])};
+                if(cloudObj.cloud[word] > 7) {
+                    myWords[x] = {word: keys[x], size: 49};
+                }
+                else {
+                    myWords[x] = {word: keys[x], size: cloudObj.cloud[word]*(14-cloudObj.cloud[word])};
+                }
                 x += 1;
             }
 
