@@ -18,7 +18,7 @@ $ . venv/bin/activate
 
 Install Flask:
 ```
-$ pip install Flask
+$ pip3 install Flask
 ```
 
 ### File Structure
